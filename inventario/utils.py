@@ -5,7 +5,7 @@ class GroqClient:
     def __init__(self):
         self.api_key = os.getenv("GROQ_API_KEY")
         self.url = "https://api.groq.com/openai/v1/chat/completions"
-        self.model = "llama-3.1-8b-instant"
+        self.model = "llama-3.3-70b-versatile"
         self.system_prompt = (
             "Eres un asistente experto en gestión de inventarios y marketing para una joyería de lujo. "
             "Solo respondes consultas relacionadas con joyería, precios de materiales preciosos y análisis de riesgo de clientes. "
