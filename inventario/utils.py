@@ -6,7 +6,7 @@ class GroqClient:
     def __init__(self):
         self.api_key = os.getenv("GROQ_API_KEY")
         self.url = "https://api.groq.com/openai/v1/chat/completions"
-        self.model = "llama3-8b-8192"
+        self.model = "llama-3.1-8b-instant"
 
     def _post(self, prompt):
         if not self.api_key:
