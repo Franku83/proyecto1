@@ -1,0 +1,63 @@
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Database
+*.sqlite3
+db.sqlite3
+
+# Static files (will be collected during deployment)
+staticfiles/
+
+# Environment variables
+.env
+*.env
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Temporary
+*.tmp
+*.bak
+*.old
+
+# Secrets (NEVER commit these)
+secrets/
+keys/
+credentials/
+
+# Docker
+*.log
+
+# System
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local configuration
+local_settings.py
