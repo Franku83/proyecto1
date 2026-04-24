@@ -1,5 +1,4 @@
-from django.db.models import Sum, Value
-from django.db.models.functions import Coalesce
+from django.db.models import Sum
 from rest_framework import serializers
 from .models import Proveedor, TipoJoya, Producto, Compra, Venta, Cliente
 
@@ -48,16 +47,18 @@ class VentaSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         producto = attrs.get("producto") or getattr(self.instance, "producto", None)
         cantidad_nueva = attrs.get("cantidad") or getattr(self.instance, "cantidad", None)
-        if not producto or not cantidad_nueva:
+        
+        if not producto or cantidad_nueva is None:
             return attrs
 
-        compras_sum = producto.compras.aggregate(total=Coalesce(Sum("cantidad"), Value(0)))["total"]
+        compras = producto.compras.aggregate(total=Sum("cantidad"))["total"] or 0
         ventas_qs = producto.ventas.all()
         if self.instance:
             ventas_qs = ventas_qs.exclude(id=self.instance.id)
-        ventas_sum = ventas_qs.aggregate(total=Coalesce(Sum("cantidad"), Value(0)))["total"]
+        ventas = ventas_qs.aggregate(total=Sum("cantidad"))["total"] or 0
         
-        stock = int(compras_sum) - int(ventas_sum)
+        stock = compras - ventas
         if cantidad_nueva > stock:
             raise serializers.ValidationError({"cantidad": f"Stock insuficiente. Disponible: {stock}"})
+            
         return attrs

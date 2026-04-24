@@ -20,7 +20,6 @@ class Producto(models.Model):
     tipo = models.ForeignKey(TipoJoya, on_delete=models.PROTECT, related_name="productos")
     sku = models.CharField(max_length=60, blank=True, default="")
     activo = models.BooleanField(default=True)
-    # Nuevos campos
     costo = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     precio_venta = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     material = models.CharField(max_length=100, blank=True, default="")

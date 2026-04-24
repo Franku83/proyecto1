@@ -1,66 +1,28 @@
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .models import Proveedor, TipoJoya, Producto, Compra, Venta, Cliente
+from .models import Proveedor, Producto, Cliente
 from .serializers import (
-    ProveedorSerializer, TipoJoyaSerializer, ProductoSerializer, 
-    CompraSerializer, VentaSerializer, ClienteSerializer
+    ProveedorSerializer, ProductoSerializer, ClienteSerializer
 )
 from .utils import GroqClient
 
-# --- Base Views ---
+class ProveedorListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Proveedor.objects.all()
+    serializer_class = ProveedorSerializer
 
-class ProveedorListCreateAPIView(APIView):
-    def get(self, request):
-        qs = Proveedor.objects.all()
-        return Response(ProveedorSerializer(qs, many=True).data)
+class ProductoListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Producto.objects.select_related("proveedor", "tipo").all()
+    serializer_class = ProductoSerializer
 
-    def post(self, request):
-        ser = ProveedorSerializer(data=request.data)
-        if ser.is_valid():
-            ser.save()
-            return Response(ser.data, status=status.HTTP_201_CREATED)
-        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+class ClienteListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
 
-class ProductoListCreateAPIView(APIView):
-    def get(self, request):
-        qs = Producto.objects.select_related("proveedor", "tipo").all()
-        return Response(ProductoSerializer(qs, many=True).data)
-
-    def post(self, request):
-        ser = ProductoSerializer(data=request.data)
-        if ser.is_valid():
-            ser.save()
-            return Response(ser.data, status=status.HTTP_201_CREATED)
-        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class ClienteListCreateAPIView(APIView):
-    def get(self, request):
-        qs = Cliente.objects.all()
-        return Response(ClienteSerializer(qs, many=True).data)
-
-    def post(self, request):
-        ser = ClienteSerializer(data=request.data)
-        if ser.is_valid():
-            ser.save()
-            return Response(ser.data, status=status.HTTP_201_CREATED)
-        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class ClienteDetailAPIView(APIView):
-    def get(self, request, pk):
-        cliente = get_object_or_404(Cliente, pk=pk)
-        return Response(ClienteSerializer(cliente).data)
-
-    def put(self, request, pk):
-        cliente = get_object_or_404(Cliente, pk=pk)
-        ser = ClienteSerializer(cliente, data=request.data)
-        if ser.is_valid():
-            ser.save()
-            return Response(ser.data)
-        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# --- AI Endpoints ---
+class ClienteDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
 
 class GenerarMarketingAPIView(APIView):
     def post(self, request, pk):
