@@ -2,15 +2,20 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import Proveedor, Producto, Cliente
+from .models import Proveedor, Producto, Cliente, TipoJoya, Compra, Venta
 from .serializers import (
-    ProveedorSerializer, ProductoSerializer, ClienteSerializer
+    ProveedorSerializer, ProductoSerializer, ClienteSerializer,
+    TipoJoyaSerializer, CompraSerializer, VentaSerializer
 )
 from .utils import GroqClient
 
 class ProveedorListCreateAPIView(generics.ListCreateAPIView):
     queryset = Proveedor.objects.all()
     serializer_class = ProveedorSerializer
+
+class TipoJoyaListCreateAPIView(generics.ListCreateAPIView):
+    queryset = TipoJoya.objects.all()
+    serializer_class = TipoJoyaSerializer
 
 class ProductoListCreateAPIView(generics.ListCreateAPIView):
     queryset = Producto.objects.select_related("proveedor", "tipo").all()
@@ -23,6 +28,14 @@ class ClienteListCreateAPIView(generics.ListCreateAPIView):
 class ClienteDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+
+class CompraListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Compra.objects.select_related("producto").all()
+    serializer_class = CompraSerializer
+
+class VentaListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Venta.objects.select_related("producto", "cliente").all()
+    serializer_class = VentaSerializer
 
 class GenerarMarketingAPIView(APIView):
     def post(self, request, pk):
